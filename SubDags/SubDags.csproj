@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -43,8 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BreadthFirstSearch.cs" />
+    <Compile Include="CustomSection.cs" />
     <Compile Include="DepthFirstSearch.cs" />
+    <Compile Include="SubDag.cs" />
     <Compile Include="GraphBuilder.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Program.cs" />
@@ -53,8 +55,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Graphs\" />
+    <Content Include="Graphs\graph.txt" />
+    <Content Include="Graphs\graph1.txt" />
+    <Content Include="Graphs\graph2.txt" />
+    <Content Include="Graphs\graph3.txt" />
+    <Content Include="Graphs\mini-mfo2.txt" />
+    <Content Include="Graphs\tree_100.txt" />
+    <Content Include="Graphs\tree_25.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

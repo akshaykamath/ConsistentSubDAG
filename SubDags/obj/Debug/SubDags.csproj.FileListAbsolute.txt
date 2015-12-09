@@ -4,3 +4,9 @@ c:\users\akshay\documents\visual studio 2015\Projects\SubDags\SubDags\bin\Debug\
 c:\users\akshay\documents\visual studio 2015\Projects\SubDags\SubDags\obj\Debug\SubDags.exe
 c:\users\akshay\documents\visual studio 2015\Projects\SubDags\SubDags\obj\Debug\SubDags.pdb
 c:\users\akshay\documents\visual studio 2015\Projects\SubDags\SubDags\obj\Debug\SubDags.csprojResolveAssemblyReference.cache
+C:\Users\Akshay\Documents\Algorithms Course\Final Project\Mini Project\ConsistentSubDAG\SubDags\bin\Debug\SubDags.exe.config
+C:\Users\Akshay\Documents\Algorithms Course\Final Project\Mini Project\ConsistentSubDAG\SubDags\obj\Debug\SubDags.exe
+C:\Users\Akshay\Documents\Algorithms Course\Final Project\Mini Project\ConsistentSubDAG\SubDags\obj\Debug\SubDags.pdb
+C:\Users\Akshay\Documents\Algorithms Course\Final Project\Mini Project\ConsistentSubDAG\SubDags\obj\Debug\SubDags.csprojResolveAssemblyReference.cache
+C:\Users\Akshay\Documents\Algorithms Course\Final Project\Mini Project\ConsistentSubDAG\SubDags\bin\Debug\SubDags.exe
+C:\Users\Akshay\Documents\Algorithms Course\Final Project\Mini Project\ConsistentSubDAG\SubDags\bin\Debug\SubDags.pdb

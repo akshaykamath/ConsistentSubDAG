@@ -1,41 +1,99 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace SubDags
 {
-    public class DepthFirstAlgorithm
+    /// <summary>
+    /// This class accepts an adjacency list and then performs a discovery of nodes in a topologically sorted order.
+    /// The public features of class are :
+    /// * AdjacencyList - Returns the adjacency list.
+    /// * TopologicalSortedVertices - Returns the list of topologically sorted vertices.
+    /// * ParentDictionary - Returns a dictionary containing the parents of each node.
+    /// * PrintTopologicalSortedNodes() - Prints a list of topologically sorted vertices.
+    /// </summary>
+    internal class DepthFirstSearch
     {
+        #region Private Members
         private List<Node> _adjacencyList = new List<Node>();
         private List<Node> _toplogicalSortedVertices = new List<Node>();
-        private Dictionary<Node, List<Node>> nodeParentDictionary = new Dictionary<Node, List<Node>>();
-        private int time = 0;
+        private Dictionary<Node, string> _nodeParentDictionary = new Dictionary<Node, string>();
+        private int _visitTime = 0;
+        private Node _rootNode;
+        #endregion Private Members
 
+        #region Public Properties
+        /// <summary>
+        /// Gets or sets the adjacency list maintained by the program.
+        /// </summary>
         public List<Node> AdjacencyList
         {
             get { return _adjacencyList; }
-            set { _adjacencyList = value; }
+            private set { _adjacencyList = value; }
         }
 
-        public DepthFirstAlgorithm()
+        /// <summary>
+        /// Gets or sets the list of sorted vertices.
+        /// </summary>
+        public List<Node> TopologicalSortedVertices
         {
-            var root = BuildGraph();
-            AddParentDictionary(null, root);
-
-            PerformDfs(root);
-            PrintTopologicalSortedNodes();
+            get { return _toplogicalSortedVertices; }
+            set { _toplogicalSortedVertices = value; }
         }
 
-        private Node BuildGraph()
+        /// <summary>
+        /// Gets or sets the parent dictionary for each vertex in a graph.
+        /// </summary>
+        public Dictionary<Node, string> ParentDictionary
         {
-            GraphBuilder gp = new GraphBuilder();
-            Node root = gp.BuildGraph();
-            AdjacencyList = gp.AdjacencyList;
-            return root;
+            get { return _nodeParentDictionary; }
+            set { _nodeParentDictionary = value; }
+        }
+        #endregion Public Properties
+
+        #region Ctor
+        /// <summary>
+        /// Entry point of the class. 
+        /// Accepts an adjacency list and performs a topological sort.
+        /// </summary>
+        /// <param name="adjacencyList"></param>
+        public DepthFirstSearch(List<Node> adjacencyList)
+        {            
+            AdjacencyList = adjacencyList;
+            _rootNode = AdjacencyList[0];
+            PerformTopologicalSort();           
+        }
+        #endregion Ctor
+
+        #region Public Methods
+        /// <summary>
+        /// Prints out a list of vertices that are topologically sorted.
+        /// </summary>
+        public void PrintTopologicalSortedNodes()
+        {
+            foreach (var vertice in _toplogicalSortedVertices)
+            {
+                Console.WriteLine("{0} {1} {2} {3}", vertice.ToString(), vertice.InitialTime, vertice.FinishTime, vertice.Color);
+            }
+        }
+        #endregion Public Methods
+
+        #region Private Methods
+        /// <summary>
+        /// Algorithm based on CLRS textbook.
+        /// Uses DFS.
+        /// </summary>
+        private void PerformTopologicalSort()
+        {            
+            AddParentDictionary(null, _rootNode);
+            PerformDfs();
+
+            TopologicalSortedVertices.Reverse();
         }
 
-        private void PerformDfs(Node root)
+        /// <summary>
+        /// Performs DFS based on algorithm in CLRS textbook.
+        /// </summary>        
+        private void PerformDfs()
         {
             foreach (var adjNode in AdjacencyList)
             {
@@ -45,11 +103,11 @@ namespace SubDags
                 }
             }
         }
-
+        
         private void DfsVisit(Node adjNode)
         {
-            time = time + 1;
-            adjNode.InitialTime = time;
+            _visitTime = _visitTime + 1;
+            adjNode.InitialTime = _visitTime;
             adjNode.Color = Color.Gray;
             foreach (var vertex in adjNode.Children)
             {
@@ -63,124 +121,31 @@ namespace SubDags
             }
 
             adjNode.Color = Color.Black;
-            time = time + 1;
-            adjNode.FinishTime = time;
+            _visitTime = _visitTime + 1;
+            adjNode.FinishTime = _visitTime;
             _toplogicalSortedVertices.Add(adjNode);
         }
 
         private void AddParentDictionary(Node parent, Node child)
         {
-            if (!nodeParentDictionary.ContainsKey(child))
+            if (!_nodeParentDictionary.ContainsKey(child))
             {
                 if (parent == null)
                 {
-                    nodeParentDictionary.Add(child, null);
+                    _nodeParentDictionary.Add(child, null);
                 }
                 else
                 {
-                    nodeParentDictionary.Add(child, new List<Node>() { parent });
+                    _nodeParentDictionary.Add(child, string.Format(".*\\[{0}\\].*", parent.ToString()));
                 }
             }
             else
             {
-                List<Node> parents = new List<Node>();
-                nodeParentDictionary.TryGetValue(child, out parents);
-                parents.Insert(0, parent);
+                string oldParent = string.Empty;
+                _nodeParentDictionary.TryGetValue(child, out oldParent);
+                _nodeParentDictionary[child] = string.Format(".*\\[{0}\\]{1}", parent.ToString(), oldParent);
             }
         }
-
-        private void AddParentDictionaryEntry(Node root)
-        {
-            Queue<Node> visitedQueue = new Queue<Node>();
-            Queue<Node> tempQueue = new Queue<Node>();
-
-            List<string> subdags = new List<string>();
-
-            tempQueue.Enqueue(root);
-            nodeParentDictionary.Add(root, null);
-
-            while (tempQueue.Count > 0)
-            {
-                Node currentNode = tempQueue.Dequeue();
-                foreach (Node child in currentNode.Children)
-                {
-                    if (!nodeParentDictionary.ContainsKey(child))
-                    {
-                        tempQueue.Enqueue(child);
-                        nodeParentDictionary.Add(child, new List<Node>() { currentNode });
-                    }
-                    else
-                    {
-                        List<Node> parents = new List<Node>();
-                        nodeParentDictionary.TryGetValue(child, out parents);
-                        parents.Add(currentNode);
-                    }
-                }
-
-                visitedQueue.Enqueue(currentNode);
-            }
-        }
-
-        public void PrintTopologicalSortedNodes()
-        {
-            _toplogicalSortedVertices.Reverse();
-            foreach (var vertice in _toplogicalSortedVertices)
-            {
-                Console.WriteLine("{0} {1} {2} {3}", vertice.ToString(), vertice.InitialTime, vertice.FinishTime, vertice.Color);
-            }
-        }
-
-        public void CreateSubDags()
-        {
-            List<string> subdags = new List<string>();
-
-            // Traverse the visited queue
-            //_toplogicalSortedVertices.Reverse();
-            foreach (var currentNode in _toplogicalSortedVertices)
-            {
-                // Root node
-                var root = nodeParentDictionary[currentNode];
-                if (root == null)
-                {
-                    subdags.Add(currentNode.ToString());
-                }
-
-                // has parents, traverse through all visited nodes from its recently visited parent.
-                else
-                {
-                    // Get parent string, search for it in the list and then append it.                        
-                    StringBuilder sb = new StringBuilder();
-
-
-                    foreach (var parent in nodeParentDictionary[currentNode])
-                    {
-                        if (parent != null)
-                        {
-                            sb.Append(".*");
-                            sb.Append(parent.ToString());
-                            sb.Append(".*");
-                        }
-                    }
-
-                    var initialCount = subdags.Count;
-                    //foreach (var discoveredSubdag in subdags)
-                    for (int i = 0; i < initialCount; i++)
-                    {
-                        var discoveredSubdag = subdags[i];
-                        if (Regex.IsMatch(discoveredSubdag, sb.ToString()))
-                        {
-                            var newSubDag = string.Format("{0}{1}", discoveredSubdag, currentNode.ToString());
-                            subdags.Add(newSubDag);
-                        }
-                    }
-                }
-            }
-
-            foreach (var subdag in subdags)
-            {
-                Console.WriteLine(subdag);
-            }
-            Console.WriteLine("Count of subdags: " + subdags.Count);
-        }
+        #endregion Private Methods
     }
 }

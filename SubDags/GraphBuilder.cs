@@ -1,42 +1,95 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.IO;
+using System.Configuration;
+
 namespace SubDags
 {
-    class GraphBuilder
+    /// <summary>
+    /// A singleton class that produces the adjacency list of a graph from a file.
+    /// </summary>
+    internal class GraphBuilder
     {
+        #region Private Members
+        private static readonly GraphBuilder _instance = new GraphBuilder();
         private List<Node> _adjacencyList = new List<Node>();
+        #endregion Private Members
+
+        #region Ctor
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        private GraphBuilder()
+        {
+        }
+        #endregion Ctor
+
+        #region Public Properties
+
+        public static GraphBuilder Instance
+        {
+            get { return _instance; }
+        }
+
         public List<Node> AdjacencyList
         {
             get { return _adjacencyList; }
+            set { _adjacencyList = value; }
         }
+        #endregion Public Properties
 
+        #region Public Methods
+        /// <summary>
+        /// Method reads the adjacency matrix file specified in the app.config and
+        /// then updates the adjacency matrix and returns the root node.
+        /// </summary>
+        /// <returns>Returns the root node.</returns>
         public Node ReadGraph()
         {
             //string[] lines = File.ReadAllLines(@"Graphs\graph.txt");
-            string fileName = @"Graphs\graph.txt";
+        //   var graphSection = (GraphElement)(ConfigurationManager.GetSection("graphfilelocation"));
+           // var fileName = graphSection.FilePath;
+           var fileName = @"C:\Users\Akshay\Documents\Algorithms Course\Final Project\Mini Project\ConsistentSubDAG\SubDags\Graphs\graph2.txt";
+
+           // string fileName = ConfigurationManager.AppSettings["graphfilelocation"]; ;
             string line = string.Empty;
+            int lineCount = 0;
             using (StreamReader file = new StreamReader(fileName))
-            {
-                while ((line = file.ReadLine().Trim()) != null)
+            {                
+                while ((line = file.ReadLine()) != null)
                 {
-                    char[] delimiters = new char[] { '\t' };
-                    string[] parts = line.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                    for (int i = 0; i < parts.Length; i++)
+                    line = line.Trim();
+                    char[] delimiters = new char[] { ' ' };
+                    string[] nodes = line.Split(delimiters);
+
+                    if (lineCount == 0)
                     {
-                        Console.WriteLine(parts[i]);
-                        sepList.Add(parts[i]);
+                        for (int nodeCount = 1; nodeCount <= nodes.Length; nodeCount++)
+                        {
+                            AdjacencyList.Add(new Node(nodeCount.ToString()));                            
+                        }                        
                     }
 
+                    for (int nodeCount = 0; nodeCount < nodes.Length; nodeCount++)
+                    {
+                        if (nodes[nodeCount] == decimal.One.ToString())
+                        {
+                            _adjacencyList[lineCount].Children.Add(_adjacencyList[nodeCount]);
+                        }                        
+                    }
+
+                    lineCount++;                    
                 }
 
                 file.Close();
             }
-        }
 
+            // Return the root of the adjacency list.
+            return AdjacencyList[0];
+        }
+        #endregion
+        
+        #region Deprecated Method
+        [System.Obsolete]
         public Node BuildGraph()
         {
             /*Pedja example.
@@ -230,5 +283,6 @@ namespace SubDags
             return n1;
 
         }
+        #endregion 
     }
 }

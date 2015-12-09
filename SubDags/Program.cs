@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
+
 namespace  SubDags
 {
     public enum Color
@@ -15,16 +13,15 @@ namespace  SubDags
     {
         static void Main(string[] args)
         {
-            //BreadthFirstAlgorithm b = new BreadthFirstAlgorithm();            
-
             Console.WriteLine("Traverse\n------");
-            //var root = b.BuildGraph();
-            // b.Traverse(root);    
-            //b.CreateSubDags();
+            GraphBuilder.Instance.ReadGraph();
+            
+            DepthFirstSearch dfs = new DepthFirstSearch(GraphBuilder.Instance.AdjacencyList);
+            dfs.PrintTopologicalSortedNodes();
 
-            DepthFirstAlgorithm b = new DepthFirstAlgorithm();
-            b.CreateSubDags();
-
+            ConsistentSubDags subDags = new ConsistentSubDags(GraphBuilder.Instance.AdjacencyList, dfs.TopologicalSortedVertices, dfs.ParentDictionary);
+            subDags.CreateSubDags();
+            subDags.PrintAllSubDags();
             Console.ReadLine();
         }
     }
