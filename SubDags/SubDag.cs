@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace SubDags
 {
@@ -85,7 +85,10 @@ namespace SubDags
                         for (int i = 0; i < initialCount; i++)
                         {
                             var discoveredSubdag = SubDAGS[i];
-                            if (Regex.IsMatch(discoveredSubdag, ParentDictionary[currentNode]))
+                            var parents = ParentDictionary[currentNode].Split(',');
+                            bool hasParentsInSubDAG = parents.All(parent => discoveredSubdag.Contains(parent));
+
+                            if (hasParentsInSubDAG)
                             {
                                 var newSubDag = string.Format("{0}[{1}]", discoveredSubdag, currentNode.ToString());
                                 SubDAGS.Add(newSubDag);
@@ -102,7 +105,7 @@ namespace SubDags
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(SubDAGS.Count.ToString());
             }
-            
+
             Console.WriteLine("Count of subdags: " + SubDAGS.Count);
             return SubDAGS.Count;
         }

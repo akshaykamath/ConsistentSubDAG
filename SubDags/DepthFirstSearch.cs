@@ -87,6 +87,7 @@ namespace SubDags
             AddParentDictionary(null, _rootNode);
             PerformDfs();
 
+            // Reverse the sorted list, this is necessary to iterate it from root node.
             TopologicalSortedVertices.Reverse();
         }
 
@@ -136,14 +137,14 @@ namespace SubDags
                 }
                 else
                 {
-                    _nodeParentDictionary.Add(child, string.Format(".*\\[{0}\\].*", parent.ToString()));
+                    _nodeParentDictionary.Add(child, string.Format(@"[{0}]", parent.ToString()));
                 }
             }
             else
             {
                 string oldParent = string.Empty;
                 _nodeParentDictionary.TryGetValue(child, out oldParent);
-                _nodeParentDictionary[child] = string.Format(".*\\[{0}\\]{1}", parent.ToString(), oldParent);
+                _nodeParentDictionary[child] = string.Format("[{0}],{1}", parent.ToString(), oldParent);
             }
         }
         #endregion Private Methods

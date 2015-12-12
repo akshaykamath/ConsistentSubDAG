@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 
 namespace  SubDags
 {
@@ -13,15 +14,16 @@ namespace  SubDags
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Traverse\n------");
-            GraphBuilder.Instance.ReadGraph();
-            
+            var graphMode = ConfigurationManager.AppSettings["graphmode"];
+            GraphBuilder.Instance.ReadGraph(Convert.ToInt32(graphMode));
+
             DepthFirstSearch dfs = new DepthFirstSearch(GraphBuilder.Instance.AdjacencyList);
             dfs.PrintTopologicalSortedNodes();
 
             ConsistentSubDags subDags = new ConsistentSubDags(GraphBuilder.Instance.AdjacencyList, dfs.TopologicalSortedVertices, dfs.ParentDictionary);
             subDags.CreateSubDags();
-            subDags.PrintAllSubDags();
+            // Uncomment this line to print all the subgraphs
+            // subDags.PrintAllSubDags();
             Console.ReadLine();
         }
     }

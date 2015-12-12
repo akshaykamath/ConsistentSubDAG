@@ -16,6 +16,11 @@ namespace SubDags
         public int FinishTime { get; set; }
         public Node EdgeNode { get; set; }
 
+        public string Identity
+        {
+            get { return _identity; }
+            set { _identity = value; }
+        }
         /// <summary>
         /// Accepts the identity string of the node.
         /// </summary>
